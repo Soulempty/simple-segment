@@ -1,0 +1,88 @@
+
+batch_size: 4
+epochs: 180
+
+train_dataset:
+  type: CFDataset
+  dataset_root: E:/workspace/runtime/dataset/wafer
+  anno_file: train.txt
+  transforms:
+    type: Compose
+    augmentations: 
+      - type: Resize
+        base_size: 
+        - 832
+        - 832
+      - type: ForegroundCrop
+        crop_size: 
+        - 512
+        - 512
+        prob: 0.9
+      - type: RandomHorizontalFlip
+      - type: RandomDistort
+        brightness_range: 0.4
+        contrast_range: 0.4
+        saturation_range: 0.4
+      - type: ToTensor
+      - type: Normalize
+
+val_dataset:
+  type: CFDataset
+  dataset_root: E:/workspace/runtime/dataset/wafer
+  anno_file: val.txt
+  transforms:
+    type: Compose
+    augmentations: 
+      - type: Resize
+        base_size: 
+        - 832
+        - 832
+      - type: ToTensor
+      - type: Normalize
+
+model:
+  type: UNet
+  num_classes: 20
+
+optimizer:
+  type: SGD
+  lr: 1.0e-3
+  momentum: 0.9
+  weight_decay: 5.0e-4
+
+lr_scheduler:
+  - type: LinearLR
+    start_factor: 0.05
+    total_iters: 500
+  - type: PolynomialLR
+    power: 0.9
+
+loss:
+  type: CrossEntropyLoss
+  sample: ohem
+  ratio: 0.2
+
+log_iters: 20
+work_dir: work_dirs
+num_workers: 4
+class_names: 
+  - Background
+  - Biaoji
+  - Bianyuanbaidian
+  - Huahen
+  - Lvpao
+  - Bengbian
+  - Baidian
+  - Heidian
+  - Baiban
+  - Xianyichang
+  - Yiwu
+  - Zangwu
+  - Lvbuqi
+  - Duankai
+  - Huashang
+  - Cashang
+  - Huanqie
+  - Kailie
+  - Xianyichang2
+  - Lvbuping

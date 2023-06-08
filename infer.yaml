@@ -1,0 +1,30 @@
+
+model:
+  type: UNet
+  num_classes: 20
+
+input_size:
+  - 832
+  - 832
+
+class_names: 
+  - Background
+  - Biaoji
+  - Bianyuanbaidian
+  - Huahen
+  - Lvpao
+  - Bengbian
+  - Baidian
+  - Heidian
+  - Baiban
+  - Xianyichang
+  - Yiwu
+  - Zangwu
+  - Lvbuqi
+  - Duankai
+  - Huashang
+  - Cashang
+  - Huanqie
+  - Kailie
+  - Xianyichang2
+  - Lvbuping
