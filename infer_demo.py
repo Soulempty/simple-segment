@@ -33,6 +33,6 @@ def infer(model_path,image_path,save_path='work_dirs/result',config_path=None):
         # cv2.imwrite(save_p,results[filename])
 
 if __name__ == "__main__":
-    model_path = 'work_dirs/model/unet.trt' # 'work_dirs/model/best.pth' 
-    image_path = 'E:/workspace/runtime/dataset/wafer/images'
+    model_path = 'demo/model/unet.trt' # 'demo/model/best.pth' 
+    image_path = 'demo/images'
     infer(model_path,image_path=image_path)

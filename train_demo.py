@@ -30,6 +30,13 @@ def train(config_path='config.yaml'):
     lr = segment.lr
     epochs = segment.epochs
     draw = DynamicDrawing(iters,lr)
+
+    # set param by demanding with api set_func,such as bellow.
+    # segment.set_lr()
+    # segment.set_datapath()
+    # segment.set_epoch()
+    # segment.set_workdir()
+
     segment.train(draw.add_data)
     time.sleep(300)
     print(draw.draw())

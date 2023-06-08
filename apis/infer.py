@@ -15,6 +15,7 @@ class SegmentModel():
             config_path = 'infer.yaml'
 
         self.config = Config(config_path)
+        self.model_path = self.config.model_path
         self.input_size = self.config.input_size
         self.palette = [(np.random.randint(255),np.random.randint(255),np.random.randint(255)) for i in range(len(self.config.class_names))]
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -71,9 +72,14 @@ class SegmentModel():
             output = self.model.infer(input)[0]
             self.run_mode = 'trt'
 
-    def set_model_path(self,model_path):
-        self.model_path = model_path
+    def set_model_path(self,model_path=None):
+        if model_path:
+            self.model_path = model_path
     
+    def set_input_size(self,input_size=None):
+        if input_size:
+            self.input_size = input_size
+
     def img_proc(self,image):
         img = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
         img = cv2.resize(img,(self.input_size[1],self.input_size[0]),interpolation=cv2.INTER_LINEAR)

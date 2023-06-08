@@ -7,6 +7,7 @@ input_size:
   - 832
   - 832
 
+model_path: demo/model/unet.trt
 class_names: 
   - Background
   - Biaoji
