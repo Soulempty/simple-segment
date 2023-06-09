@@ -5,8 +5,6 @@ import torch
 import yaml
 import codecs
 from models import Segment_
-import logging 
-import traceback
 import numpy as np
 
 import torch.optim as optim
@@ -36,6 +34,7 @@ class Segment():
         self._class_names = self.config.class_names
         self._num_workers = self.config.num_workers
         self._lr = self.config.optimizer['lr']
+        self._base_size = self.config.train_dataset['transforms']['augmentations'][0]['base_size']
         self._iters_per_epoch = 0
         self._iters = 0
         self.model = None
@@ -140,16 +139,16 @@ class Segment():
     def export(self):
         onnx_path = os.path.join(self.model_dir,'model.onnx')
         print(f"exporting the onnx model to path {onnx_path}")
-        input_names = [ "input" ] 
-        output_names = [ "output" ]
-        self.model.eval()
+        input = torch.randn(size=(1,3,*self.base_size)).to(self.device)
         model = Segment_(self.model)
+        model.eval()
+        input_names = ["input"] 
+        output_names = ["output"]
         torch.onnx.export(model, input,onnx_path, 
                           opset_version=12,
                           do_constant_folding=True,
                           input_names=input_names, 
                           output_names=output_names,
-                          dynamic_axes={input_names[0]: {0: 'batch_size', 2: 'in_width', 3: 'int_height'},output_names[0]: {0: 'batch_size', 2: 'out_width', 3: 'out_height'}},
                           verbose=False)
         print("-------- finishing export onnx model ------------")
 
@@ -162,6 +161,7 @@ class Segment():
 
     def set_epoch(self,epoch):
         self._epochs = epoch
+        self.config.epochs = epoch
         self.init_config()
         
     def set_datapath(self,data_path):
@@ -170,6 +170,7 @@ class Segment():
         self.init_config()
 
     def set_basesize(self,base_size):
+        self._base_size = base_size
         self.config.train_dataset['transforms']['augmentations'][0]['base_size'] = base_size
         self.init_config()
     
@@ -188,6 +189,9 @@ class Segment():
     @property
     def batch_size(self):
         return self._batch_size
+    @property
+    def base_size(self):
+        return self._base_size
     @property
     def model_dir(self):
         return self._model_dir

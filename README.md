@@ -1,3 +1,23 @@
+### 环境准备
+
+```
+- 安装anaconda
+- 构建独立环境：conda create -n dml python=3.9
+- 安装pytorch: conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+- 安装依赖包：pip install -r requirements.txt
+- 安装tensorRT：
+    - 下载（需注册登录）：https://developer.nvidia.com/nvidia-tensorrt-8x-download
+    - 版本选择：TensorRT 8.6 GA for Windows 10 and CUDA 11.0, 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7 and 11.8 ZIP Package
+    - 解压目录中执行：
+                pip install python/tensorrt-8.6.1-cp39-none-win_amd64.whl
+                pip install graphsurgeon/graphsurgeon-0.4.6-py2.py3-none-any.whl
+                pip install onnx_graphsurgeon/onnx_graphsurgeon-0.3.12-py2.py3-none-any.whl
+                pip install uff/uff-0.6.9-py2.py3-none-any.whl
+```
+
+
+
+
 ### 数据准备
 ```
 custom_dataset

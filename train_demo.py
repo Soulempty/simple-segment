@@ -32,10 +32,10 @@ def train(config_path='config.yaml'):
     draw = DynamicDrawing(iters,lr)
 
     # set param by demanding with api set_func,such as bellow.
-    # segment.set_lr()
-    # segment.set_datapath()
-    # segment.set_epoch()
-    # segment.set_workdir()
+    # segment.set_lr(0.002)
+    # segment.set_datapath('dataset/wafer')
+    # segment.set_epoch(160)
+    # segment.set_workdir('work_dir')
 
     segment.train(draw.add_data)
     time.sleep(300)

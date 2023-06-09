@@ -34,5 +34,5 @@ def infer(model_path,image_path,save_path='work_dirs/result',config_path=None):
 
 if __name__ == "__main__":
     model_path = 'demo/model/unet.trt' # 'demo/model/best.pth' 
-    image_path = 'demo/images'
+    image_path = 'demo/image'
     infer(model_path,image_path=image_path)
