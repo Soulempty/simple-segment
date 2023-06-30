@@ -1,0 +1,126 @@
+
+batch_size: 4
+epochs: 180
+train_dataset:
+  - type: CFDataset
+    start_epoch: 0
+    dataset_root: E:/workspace/runtime/dataset/wafer
+    anno_file: train.txt
+    mode: train
+    transforms:
+      type: Compose
+      augmentations: 
+        - type: Resize
+          base_size: 
+          - 768
+          - 768
+        - type: SmartCrop
+          prob: 0.9
+        - type: RandomHorizontalFlip
+        - type: RandomVerticalFlip
+        - type: RandomDistort
+          brightness_range: 0.4
+          contrast_range: 0.4
+          saturation_range: 0.4
+        - type: ToTensor
+        - type: Normalize
+          mean: 
+          - 0.40531018 
+          - 0.39174753 
+          - 0.58405274
+          std:
+          - 0.18916684 
+          - 0.18335721 
+          - 0.21751815
+
+val_dataset:
+  type: CFDataset
+  dataset_root: E:/workspace/runtime/dataset/wafer
+  anno_file: val.txt
+  mode: val
+  transforms:
+    type: Compose
+    augmentations: 
+      - type: Resize
+        base_size: 
+        - 768
+        - 768
+      - type: ToTensor
+      - type: Normalize
+        mean: 
+        - 0.40531018 
+        - 0.39174753 
+        - 0.58405274
+        std:
+        - 0.18916684 
+        - 0.18335721 
+        - 0.21751815
+
+model:
+  type: UNet
+  num_classes: 20
+  backbone: 
+    type: ResNet18
+
+optimizer:
+  type: SGD
+  lr: 1.0e-3
+  momentum: 0.9
+  weight_decay: 5.0e-4
+
+lr_scheduler:
+  - type: LinearLR
+    start_factor: 0.3
+    total_iters: 500
+  - type: PolynomialLR
+    power: 0.9
+
+loss:
+  type: CrossEntropyLoss
+  sample: strap2
+  ratio: 0.1
+
+evaluate: evaluate
+log_iters: 20
+work_dir: work_dirs/wafer/crop_blob
+num_workers: 4
+rebalance_epoch: 60
+use_finetune: false
+use_weightsampler: false
+
+resume: work_dirs/wafer/crop_blob/model/best.pth 
+
+input_size:
+  - 768
+  - 768
+mean:
+  - 0.40531018 
+  - 0.39174753 
+  - 0.58405274
+std:
+  - 0.18916684 
+  - 0.18335721 
+  - 0.21751815
+model_path: work_dirs/wafer/copypaste/model/model.engine
+
+class_names: 
+  - Background
+  - Biaoji
+  - Bianyuanbaidian
+  - Huahen
+  - Lvpao
+  - Bengbian
+  - Baidian
+  - Heidian
+  - Baiban
+  - Xianyichang
+  - Yiwu
+  - Zangwu
+  - Lvbuqi
+  - Duankai
+  - Huashang
+  - Cashang
+  - Huanqie
+  - Kailie
+  - Xianyichang2
+  - Lvbuping

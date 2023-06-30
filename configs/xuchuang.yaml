@@ -1,0 +1,92 @@
+
+batch_size: 4
+epochs: 180
+
+train_dataset:
+  type: CFDataset
+  dataset_root: E:/workspace/runtime/dataset/xuchuang
+  anno_file: train.txt
+  mode: train
+  transforms:
+    type: Compose
+    augmentations: 
+      - type: Resize
+        base_size: 
+        - 2048
+        - 1536
+      - type: SmartCrop
+        prob: 0.9
+      - type: RandomHorizontalFlip
+      - type: RandomVerticalFlip
+      - type: RandomDistort
+        brightness_range: 0.4
+        contrast_range: 0.4
+        saturation_range: 0.4
+      - type: ToTensor
+      - type: Normalize
+
+val_dataset:
+  type: CFDataset
+  dataset_root: E:/workspace/runtime/dataset/xuchuang
+  anno_file: val.txt
+  mode: val
+  transforms:
+    type: Compose
+    augmentations: 
+      - type: Resize
+        base_size: 
+        - 2048
+        - 1536
+      - type: ToTensor
+      - type: Normalize
+
+model:
+  type: UNet
+  num_classes: 8
+
+optimizer:
+  type: SGD
+  lr: 2.0e-4
+  momentum: 0.9
+  weight_decay: 5.0e-4
+
+lr_scheduler:
+  - type: LinearLR
+    start_factor: 0.3
+    total_iters: 500
+  - type: PolynomialLR
+    power: 0.9
+
+loss:
+  type: CrossEntropyLoss
+  sample: strap2
+  ratio: 0.1
+
+log_iters: 20
+work_dir: work_dirs/xuchuang
+num_workers: 4
+rebalance_epoch: 20 #80
+resume: #work_dirs/xuchuang/model/best-1.pth
+
+input_size:
+  - 2048
+  - 1536
+mean:
+  - 0.668707
+  - 0.701895
+  - 0.556639
+std:
+  - 0.2376
+  - 0.242161
+  - 0.189708
+model_path: work_dirs/xuchuang/model/model.engine
+
+class_names:
+  - background
+  - zw
+  - posun
+  - H1
+  - B3
+  - B2
+  - E1
+  - E2

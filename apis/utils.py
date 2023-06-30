@@ -4,6 +4,7 @@ import numpy as np
 from threading import Thread
 from tabulate import tabulate
 from torch.utils.data import DataLoader
+import sys
 
 def async_(f):
   def wrapper(*args, **kwargs):
@@ -23,7 +24,7 @@ def intersect_and_union(pred_label, label, num_classes, ignore_index=255):
     area_union = area_pred_label + area_label - area_intersect
     return area_intersect, area_union, area_pred_label, area_label
 
-def evaluate(model,dataset,class_names=[],device=None,num_workers=1,metrics=['aAcc','IoU','Acc','Precision','Dice']):
+def evaluate(model,dataset,class_names,device=None,num_workers=1,metrics=['aAcc','IoU','Acc','Precision','Dice']):
     model.eval()
     loader = DataLoader(dataset,batch_size=1, shuffle=False, num_workers=num_workers)
     num_classes = len(class_names)
@@ -34,7 +35,7 @@ def evaluate(model,dataset,class_names=[],device=None,num_workers=1,metrics=['aA
             label = data['label'].to(device).squeeze()
             logit = model(images)[0]
             mask = torch.argmax(logit,dim=1)[0]
-            results.append(intersect_and_union(label,mask,num_classes))
+            results.append(intersect_and_union(mask,label,num_classes))
     
     results = tuple(zip(*results))
     total_area_intersect = sum(results[0])
@@ -46,11 +47,13 @@ def evaluate(model,dataset,class_names=[],device=None,num_workers=1,metrics=['aA
     ret_metrics = []
     mean_iou = 0
     all_acc = 0
+    cls_iou = None
     for metric in metrics:
         if metric == 'IoU':
             headers.append('mIoU')
             headers.append('IoU')
             iou = total_area_intersect / (total_area_union+1)
+            cls_iou = iou
             mean_iou = iou[1:].mean()
             datas.append([mean_iou]*num_classes)
             datas.append(list(iou))
@@ -64,7 +67,7 @@ def evaluate(model,dataset,class_names=[],device=None,num_workers=1,metrics=['aA
             datas.append(list(acc))
         elif metric == 'Precision':
             headers.append('Precision')
-            precision = total_area_intersect / total_area_pred_label
+            precision = total_area_intersect / (total_area_pred_label+1)
             datas.append(list(precision))
         elif metric == 'Dice':
             headers.append('Dice')
@@ -76,10 +79,17 @@ def evaluate(model,dataset,class_names=[],device=None,num_workers=1,metrics=['aA
 
     print(tabulate(ret_metrics,headers))  
 
-    return mean_iou, all_acc
+    return mean_iou, cls_iou
 
 def set_seed(seed=None):
     if seed is not None:
         torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
         np.random.seed(seed)
         random.seed(seed)
+
+
+def cal_params(model): # M
+    params = 1.0 * sum(param.numel() for param in model.parameters())/1000000
+    return params
+
